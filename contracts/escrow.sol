@@ -12,13 +12,13 @@ contract Escrow{
     //details the contract needs
     address payable public userA;
     address payable public userB;
-    bytes32 public gameId;
+    //bytes32 public gameId;
 
 
     bool public isUserAStake;
     bool public isUserBStake;
 
-    bool public test;
+    //bool public test;
 
     uint public amount;
     uint public pot;
@@ -30,9 +30,8 @@ contract Escrow{
         _;
     }
 
-    constructor(address payable _userA, address payable _userB, uint _amount){
+    constructor(address payable _userA , uint _amount){
         userA=_userA;
-        userB=_userB;
         amount= _amount * (1 ether);
     }
 
@@ -44,8 +43,10 @@ contract Escrow{
             pot=pot+amount;
             isUserAStake=true;
         }
-//Condtiotions: 1. To check the user 2. To check the amt 3. To make sure stakins only done once.
-         if(msg.sender==userB && msg.value==amount && isUserBStake==false){
+//Conditions: 1. To check the user 2. To check the amt 3. To make sure stakins only done once.
+         if(msg.sender!=userA && isUserBStake==false){
+
+            userB=payable (msg.sender);
             pot=pot+amount;
             isUserBStake=true;
         }
@@ -57,41 +58,27 @@ contract Escrow{
 
     
 
-    function claim(bytes32 _userAcolor, uint8 _result) payable public{
+    function claim(uint8 _result) payable public{
         require(currState==State.AWAITING_RESULT,"Cannot confirm result");
 
         if(_result==0){
-            
-            if(_userAcolor == "white"){
-                userA.transfer(pot);
-            }
-            else{
 
-                userB.transfer(pot);
-            }
+                userA.transfer(pot);
+                currState=State.COMPLETE;
+
         }
 
         if(_result==1){
-            
-            if(_userAcolor == "black"){
-                userA.transfer(pot);
-            }
-            else{
 
-                userB.transfer(pot);
-            }
+            userA.transfer(pot);
+            currState=State.COMPLETE;
+
         }
 
-        if(_result==2){
-            userA.transfer(amount);
-            userB.transfer(amount);
-        }
-
-        currState=State.COMPLETE;
     }
 
     function withdraw() payable public{
-        require(currState==State.AWAITING_STAKE,"Either game in progress or we are awating from ");
+        require(currState==State.AWAITING_STAKE,"Either game in progress or sth else ");
 
         // 1. User A stakes User B doesn't come
         // 2. User B stakes user A does not: Let the user withdraw there asset even in between the game itself
@@ -109,3 +96,5 @@ contract Escrow{
         }
     }
 }
+
+    
