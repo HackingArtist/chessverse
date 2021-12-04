@@ -2,71 +2,110 @@
 pragma solidity ^0.8.7;
 
 contract Escrow{
-    enum State{NOT_INIT,AWAITING_STAKE, AWAITING_RESULT, COMPLETE}
-// can add 2 different states for awaiting stake chanllenger and challengee
+
+    //User A is Challenger and User B is Challengee
+    enum State{AWAITING_STAKE,GAME_STARTED,AWAITING_RESULT,COMPLETE}
+    // can add 2 different states for awaiting stake chanllenger and challengee
  
     State public currState;
 
-    bool public isChallengerIn;
-    bool public isChallengeeIn;
+    //details the contract needs
+    address payable public userA;
+    address payable public userB;
+    bytes32 public gameId;
 
-    bool public isChallengerStake;
-    bool public isChallengeeStake;
+
+    bool public isUserAStake;
+    bool public isUserBStake;
+
+    bool public test;
 
     uint public amount;
     uint public pot;
 
-    address payable public challenger;
-    address payable public challengee;
 
-
+    
     modifier escrowNotStarted(){
-        require(currState==State.NOT_INIT);
+        require(currState==State.AWAITING_STAKE);
         _;
     }
 
-    constructor(address payable _challenger, address payable _challengee, uint _amount){
-        challenger=_challenger;
-        challengee=_challengee;
+    constructor(address payable _userA, address payable _userB, uint _amount){
+        userA=_userA;
+        userB=_userB;
         amount= _amount * (1 ether);
-
-    }
-
-    function initContract() escrowNotStarted public{
-        if(msg.sender== challenger){
-            isChallengerIn = true;
-        }
-        if(msg.sender == challengee){
-            isChallengeeIn=true;
-        }
-        if(isChallengeeIn && isChallengerIn){
-            currState=State.AWAITING_STAKE;
-        }
     }
 
     function deposit() public payable{
-        require(currState==State.AWAITING_STAKE, "Lol_1");
-        if(msg.sender==challenger && msg.value==amount){
+        require(currState==State.AWAITING_STAKE, "Lol");
+        require(msg.value==amount, "Wrong Amount");
+
+        if(msg.sender==userA && isUserAStake==false){
             pot=pot+amount;
-            isChallengerStake=true;
+            isUserAStake=true;
         }
-        if(msg.sender==challengee && msg.value==amount){
+//Condtiotions: 1. To check the user 2. To check the amt 3. To make sure stakins only done once.
+         if(msg.sender==userB && msg.value==amount && isUserBStake==false){
             pot=pot+amount;
-           isChallengeeStake=true;
+            isUserBStake=true;
         }
-        if(isChallengeeStake && isChallengerStake){
+
+         if( isUserAStake && isUserBStake){
             currState=State.AWAITING_RESULT;
         }
     }
-    //my thougts: Simply add a winner address on gameResult.
-    function gameResult ( address payable _winner) payable public{
+
+    
+
+    function claim(bytes32 _userAcolor, uint8 _result) payable public{
         require(currState==State.AWAITING_RESULT,"Cannot confirm result");
-        _winner.transfer(pot);
+
+        if(_result==0){
+            
+            if(_userAcolor == "white"){
+                userA.transfer(pot);
+            }
+            else{
+
+                userB.transfer(pot);
+            }
+        }
+
+        if(_result==1){
+            
+            if(_userAcolor == "black"){
+                userA.transfer(pot);
+            }
+            else{
+
+                userB.transfer(pot);
+            }
+        }
+
+        if(_result==2){
+            userA.transfer(amount);
+            userB.transfer(amount);
+        }
+
         currState=State.COMPLETE;
     }
-    // function withdraw() payable public{
-    // require(currState==State.AWAITING_STAKE,"Can't confirm game");
-    // transfer(amount);
 
-    // }
+    function withdraw() payable public{
+        require(currState==State.AWAITING_STAKE,"Either game in progress or we are awating from ");
+
+        // 1. User A stakes User B doesn't come
+        // 2. User B stakes user A does not: Let the user withdraw there asset even in between the game itself
+        // 3. If both user stake the game there has to be a game with a result, draw, abort to claim.
+        if(msg.sender==userA && isUserAStake==true && isUserBStake==false)
+        {
+            userA.transfer(amount);
+            isUserBStake=false;
+        }
+
+        if(msg.sender==userB && isUserBStake==true && isUserAStake==false)
+        {
+            userB.transfer(amount);
+            isUserBStake=false;
+        }
+    }
 }
