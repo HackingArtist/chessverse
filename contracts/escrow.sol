@@ -4,7 +4,7 @@ pragma solidity ^0.8.7;
 contract Escrow{
 
     //User A is Challenger and User B is Challengee
-    enum State{AWAITING_STAKE,GAME_STARTED,AWAITING_RESULT,COMPLETE}
+    enum State{AWAITING_STAKE,AWAITING_RESULT,COMPLETE}
     // can add 2 different states for awaiting stake chanllenger and challengee
  
     State public currState;
@@ -96,5 +96,3 @@ contract Escrow{
         }
     }
 }
-
-    
