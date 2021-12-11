@@ -4,26 +4,21 @@ pragma solidity ^0.8.7;
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 
 contract Escrow is ChainlinkClient {
-    // chainlink-config start
     using Chainlink for Chainlink.Request;
     address private oracle;
     bytes32 private jobId;
     uint256 private fee;
-    // chainlink-config end
     
 
     //User A is Challenger and User B is Challengee
     enum State{AWAITING_STAKE,AWAITING_RESULT,COMPLETE}
-    // can add 2 different states for awaiting stake chanllenger and challengee
- 
     State public currState;
 
     //details the contract needs
     address payable public userA;
     address payable public userB;
-    //bytes32 public gameId;
     string public gameid;
-    string public url;
+    string public url; // make it private
     uint public result;
 
     bool public isUserAStake;
@@ -32,8 +27,6 @@ contract Escrow is ChainlinkClient {
     //bool public test;
     uint public amount;
     uint public pot;
-
-
     
     modifier escrowNotStarted(){
         require(currState==State.AWAITING_STAKE);
@@ -60,7 +53,7 @@ contract Escrow is ChainlinkClient {
      this function will be used by both the players to deposit money
     */
     function deposit() public payable{
-        require(currState==State.AWAITING_STAKE, "Lol");
+        require(currState==State.AWAITING_STAKE, "you got free money? send it to me");
         // require(msg.value==amount, "Wrong Amount");
 
         if(msg.sender==userA && isUserAStake==false){
@@ -104,6 +97,11 @@ contract Escrow is ChainlinkClient {
         }
         if(_result==1){
             userA.transfer(pot);
+            currState=State.COMPLETE;
+        }
+        if(_result==2){
+            userA.transfer(pot/2);
+            userB.transfer(pot/2);
             currState=State.COMPLETE;
         }
     }
