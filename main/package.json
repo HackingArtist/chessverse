@@ -1,0 +1,32 @@
+{
+  "name": "chess-dapp",
+  "version": "0.0.2",
+  "description": "A Lichess extention which allows stake and play with your friends",
+  "scripts": {
+    "build": "set NODE_ENV=production && node utils/build.js",
+    "start": "set NODE_ENV=development && node utils/webserver.js"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "3.0.0",
+    "copy-webpack-plugin": "5.0.5",
+    "css-loader": "3.2.0",
+    "dotenv-webpack": "^7.0.3",
+    "file-loader": "4.3.0",
+    "fs-extra": "8.1.0",
+    "html-loader": "0.5.5",
+    "html-webpack-plugin": "3.2.0",
+    "style-loader": "1.0.0",
+    "webpack": "4.41.2",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.9.0",
+    "write-file-webpack-plugin": "4.5.1"
+  },
+  "dependencies": {
+    "@portis/web3": "^4.0.6",
+    "@walletconnect/web3-provider": "^1.6.6",
+    "metamask-extension-provider": "^3.0.0",
+    "walletlink": "^2.2.8",
+    "web3": "^1.6.1",
+    "web3modal": "^1.9.4"
+  }
+}
