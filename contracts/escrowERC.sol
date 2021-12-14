@@ -87,7 +87,7 @@ contract Escrow is ChainlinkClient {
 
 
 
-    function claim() public returns (bytes32 requestId) 
+    function settle() public returns (bytes32 requestId) 
     {
         require(currState==State.AWAITING_RESULT,"Cannot confirm result");
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
@@ -102,22 +102,29 @@ contract Escrow is ChainlinkClient {
 
     function fulfill(bytes32 _requestId, uint256 _result) public recordChainlinkFulfillment(_requestId)
     {
-        x = "abc";
         result = _result;
-        if(_result==0){
-                usdt.transferFrom(address(this), userA, pot);
-                currState=State.COMPLETE;
-        }
-        if(_result==1){
-            usdt.transferFrom(address(this), userB, pot);
+        if(result==0){
+            xtransferERC20(usdt, userA, pot);
             currState=State.COMPLETE;
         }
-        if(_result==2){
-            usdt.transferFrom(address(this), userA, pot/2);
-            usdt.transferFrom(address(this), userB, pot/2);
+        if(result==1){
+            xtransferERC20(usdt, userB, pot);
+            currState=State.COMPLETE;
+        }
+        if(result==2){
+            xtransferERC20(usdt, userA, amount);
+            xtransferERC20(usdt, userB, amount);
             currState=State.COMPLETE;
         }
     }
+
+    function otherTokenApprove() public{
+        usdt.approve(userA,amount);
+    }
+
+    function xtransferERC20(IERC20 token, address to, uint256 _amount) public{
+       token.transfer(to,_amount);
+    } 
 
     function withdraw() payable public{
         require(currState==State.AWAITING_STAKE,"Either game in progress or sth else ");
@@ -127,13 +134,13 @@ contract Escrow is ChainlinkClient {
         // 3. If both user stake the game there has to be a game with a result, draw, abort to claim.
         if(msg.sender==userA && isUserAStake==true && isUserBStake==false)
         {
-            userA.transfer(amount);
+            xtransferERC20(usdt, userA, amount);
             isUserBStake=false;
         }
 
         if(msg.sender==userB && isUserBStake==true && isUserAStake==false)
         {
-            userB.transfer(amount);
+            xtransferERC20(usdt, userB, amount);
             isUserBStake=false;
         }
     }
