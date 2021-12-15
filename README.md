@@ -1,7 +1,9 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img width=300px src="./assets/Briefly.png" alt="Briefly-logo"></a>
-</p>
+<div align="center">
+
+<h2 > Chessverse </h2>
+<br>
+
+</div>
 
 <h3 align="center">Stake & Play chess on web2 platforms</h3>
 
@@ -13,24 +15,11 @@
 ------------------------------------------
 #### Deployed - Kovan Testnet (beta release only)
 
--Website to download extension: https://www.chessverse.xyz/
--Devfolio Submission: https://devfolio.co/submissions/chessverse-64a1
+- Website to download extension: https://www.chessverse.xyz/
+- Devfolio Submission: https://devfolio.co/submissions/chessverse-64a1
 
 
-<div align="center">
 
-<h3 > Chessverse </h3>
-<br>
-<p align="center">
-<img src ="./assets/briefly-web.gif" width = 500px>//embed youtube video here
-</p>
-
-<h3><a href="https://www.facebook.com/Briefly-350014818823728/"> Chessverse chrome extension  </a></h3>
-<br>
-<img src="./assets/sync-sub.gif" width=245px>
-<img src="./assets/show-news.gif" width=245px>
-
-</div>
 
 ------------------------------------------
 
