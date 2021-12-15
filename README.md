@@ -32,14 +32,7 @@
 - We plan to extend the support to platforms like Chess.com and and also include it for tournaments.
 
 ------------------------------------------
-### Contributors
 
-- [@Nitya](https://github.com/shivam1708)
-- [@inishchith](https://github.com/inishchith)
-- [@HackingArtist](https://github.com/Freelancer-98)
-
-
-------------------------------------------
 ### Information
 
 This repository / project is a part of [@BUIDL IT](https://buidlit.devfolio.co/) 2021
